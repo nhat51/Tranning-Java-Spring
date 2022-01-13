@@ -2,6 +2,8 @@ package com.example.javaspringtutorial.controller;
 
 import com.example.javaspringtutorial.DTO.ProductDTO;
 import com.example.javaspringtutorial.entity.Product;
+import com.example.javaspringtutorial.exception.NotFoundException;
+import com.example.javaspringtutorial.exception.ValidateException;
 import com.example.javaspringtutorial.response.ResponseApi;
 import com.example.javaspringtutorial.service.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +27,9 @@ public class ProductController {
         List<ProductDTO> dtoList = new ArrayList<>();
         for (Product p: products) {
             dtoList.add(ProductDTO.productDTO(p));
+        }
+        if (dtoList.size() == 0){
+            throw new NotFoundException("product list is empty");
         }
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseApi("success", 200, dtoList)
@@ -45,8 +51,11 @@ public class ProductController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public Product save(@RequestBody Product product){
-        return service.save(product);
+    public ResponseEntity<ResponseApi> save(@Valid @RequestBody Product product){
+        service.save(product);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseApi("success",200,product)
+        );
     }
 
     @RequestMapping(method = RequestMethod.DELETE,path = "{id}")

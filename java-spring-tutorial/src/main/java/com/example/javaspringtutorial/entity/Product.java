@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
 @Getter
@@ -18,8 +19,10 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @NotBlank(message = "Product name is blank")
     private String name;
     private double price;
+    @NotBlank(message = "Thumbnail name is blank")
     private String thumbnail;
     @Column(name = "categoryId")
     private int categoryId;
